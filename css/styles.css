@@ -1,0 +1,124 @@
+:root {
+  --bg: #f4f7fb;
+  --card: #ffffff;
+  --text: #1f2a37;
+  --accent: #2563eb;
+  --accent-dark: #1e40af;
+  --code-bg: #0f172a;
+  --code-text: #e2e8f0;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#0b1220; --card:#131c2e; --text:#e5e7eb; --accent:#60a5fa; --accent-dark:#93c5fd; }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+body {
+  margin: 0; font-family: "Segoe UI", system-ui, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.65;
+}
+
+/* ---------- Header / menú ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1.5rem; height: 60px; background: var(--accent-dark);
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+}
+.brand { color: #fff; font-weight: 700; font-size: 1.2rem; text-decoration: none; }
+#menu { display: flex; gap: .25rem; align-items: center; }
+#menu a, .dropdown > span {
+  color: #fff; text-decoration: none; padding: .5rem .8rem; border-radius: 6px;
+  cursor: pointer; display: inline-block;
+}
+#menu a:hover, .dropdown:hover > span { background: rgba(255,255,255,.18); }
+#menu a.active { background: rgba(255,255,255,.28); }
+.dropdown { position: relative; }
+.dropdown-content {
+  display: none; position: absolute; right: 0; top: 100%; min-width: 210px;
+  background: var(--card); border-radius: 8px; overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,.25);
+}
+.dropdown-content a { display: block; color: var(--text) !important; border-radius: 0; }
+.dropdown-content a:hover { background: var(--bg) !important; }
+.dropdown:hover .dropdown-content { display: block; }
+#menu-btn { display: none; background: none; border: 0; color: #fff; font-size: 1.6rem; cursor: pointer; }
+
+/* ---------- Layout ---------- */
+main { max-width: 1000px; margin: 0 auto; padding: 1.5rem; }
+.hero {
+  text-align: center; padding: 3.5rem 1.5rem; margin-bottom: 2rem; border-radius: 16px; color: #fff;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+}
+.hero h1 { margin-top: 0; font-size: clamp(1.7rem, 4vw, 2.6rem); }
+.btn {
+  display: inline-block; margin-top: 1rem; padding: .7rem 1.6rem; background: #fff; color: var(--accent-dark);
+  border-radius: 999px; font-weight: 700; text-decoration: none; transition: transform .15s;
+}
+.btn:hover { transform: translateY(-2px); }
+
+.card, .proyecto {
+  background: var(--card); border-radius: 14px; padding: 1.8rem; margin-bottom: 2rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,.08);
+}
+h2 { color: var(--accent); margin-top: 0; }
+h3 { margin-bottom: .3rem; }
+.section-title { font-size: 1.8rem; }
+.section-intro { margin-top: -.5rem; }
+
+/* ---------- Código ---------- */
+code { background: rgba(127,127,127,.18); padding: .1em .35em; border-radius: 4px; font-size: .92em; }
+pre {
+  background: var(--code-bg); color: var(--code-text); padding: 1rem; border-radius: 10px;
+  overflow-x: auto; font-size: .88rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; color: inherit; }
+
+/* ---------- Tablas ---------- */
+table { width: 100%; border-collapse: collapse; margin: .8rem 0; display: block; overflow-x: auto; }
+th, td { text-align: left; padding: .6rem .8rem; border-bottom: 1px solid rgba(127,127,127,.3); vertical-align: top; }
+th { background: rgba(37,99,235,.12); }
+
+/* ---------- Proyectos ---------- */
+.proyecto { display: grid; grid-template-columns: 420px 1fr; gap: 1.5rem; align-items: start; }
+.lienzo { line-height: 0; }
+.lienzo canvas { border: 2px solid var(--accent); border-radius: 8px; max-width: 100%; height: auto !important; }
+.info h3 { margin-top: 0; font-size: 1.4rem; }
+.info pre { max-height: 320px; }
+#demo-nativo { border: 2px solid var(--accent); border-radius: 8px; max-width: 100%; background: #cfeeff; display: block; margin: .5rem 0 1rem; }
+details summary { cursor: pointer; font-weight: 600; margin-bottom: .5rem; }
+
+footer { text-align: center; padding: 2rem 1rem; opacity: .75; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .proyecto { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  #menu-btn { display: block; }
+  #menu {
+    display: none; position: absolute; top: 60px; left: 0; right: 0; flex-direction: column; align-items: stretch;
+    background: var(--accent-dark); padding: .5rem 1rem 1rem;
+  }
+  #menu.open { display: flex; }
+  .dropdown-content { display: block; position: static; background: transparent; box-shadow: none; padding-left: 1rem; }
+  .dropdown-content a { color: #fff !important; }
+}
+
+/* ---------- Diagrama DOM ---------- */
+.leyenda { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; margin:1rem 0; font-size:.9rem; }
+.dot { display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:.3rem; vertical-align:-1px; }
+.dom-tree, .dom-tree ul { list-style:none; margin:0; padding-left:1.6rem; }
+.dom-tree { padding-left:0; overflow-x:auto; font-size:.95rem; }
+.dom-tree ul { border-left:1px solid rgba(127,127,127,.5); margin-left:.9rem; }
+.dom-tree li { position:relative; padding:.22rem 0 .22rem .9rem; white-space:nowrap; }
+.dom-tree ul > li::before { content:""; position:absolute; left:0; top:1.05rem; width:.7rem; border-top:1px solid rgba(127,127,127,.5); }
+.dom-tree em { opacity:.7; font-size:.85rem; margin-left:.3rem; }
+.n { display:inline-block; padding:.05rem .55rem; border-radius:5px; font-family:Consolas, monospace; font-size:.86rem; font-weight:600; border:1px solid; }
+.gris,   .n.gris   { background:#F1EFE8; color:#444441; border-color:#888780; }
+.morado, .n.morado { background:#EEEDFE; color:#3C3489; border-color:#534AB7; }
+.verde,  .n.verde  { background:#E1F5EE; color:#085041; border-color:#0F6E56; }
+.coral,  .n.coral  { background:#FAECE7; color:#712B13; border-color:#993C1D; }
+.dot.gris{background:#888780} .dot.morado{background:#534AB7} .dot.verde{background:#0F6E56} .dot.coral{background:#D85A30}
+.btn-sec { background:var(--accent); color:#fff; border:0; padding:.6rem 1.2rem; border-radius:8px; cursor:pointer; font-size:1rem; }
+.btn-sec:hover { background:var(--accent-dark); }
+#dom-vivo { max-height:420px; margin-top:1rem; }

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Galería p5.js · Del simulador de Khan Academy a la web real</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="#inicio">🎨 Galería p5.js</a>
+  <button id="menu-btn" aria-label="Abrir menú">☰</button>
+  <nav id="menu">
+    <a href="#inicio">Inicio</a>
+    <a href="#canvas">Canvas</a>
+    <a href="#p5">p5.js</a>
+    <a href="#dom">DOM</a>
+    <a href="#proyectos">Proyectos</a>
+    <div class="dropdown">
+      <span>Dibujos ▾</span>
+      <div class="dropdown-content">
+        <a href="#rana">Rana</a>
+        <a href="#conejo">Dientes de conejo</a>
+        <a href="#cena">¿Qué hay de cena?</a>
+        <a href="#dia-nevado">Día nevado soleado</a>
+        <a href="#muneco">Muñeco de nieve</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <section id="inicio" class="hero">
+    <h1>Del simulador de Khan Academy al código web real</h1>
+    <p>Esta página reúne cinco dibujos que programé en Khan Academy con <strong>ProcessingJS</strong>,
+       ahora adaptados a un sitio web estándar con <strong>HTML, CSS y JavaScript</strong>,
+       usando la librería <strong>p5.js</strong> y el elemento <code>&lt;canvas&gt;</code>.</p>
+    <a class="btn" href="#proyectos">Ver los dibujos</a>
+  </section>
+
+  <!-- ===================== TEORÍA: CANVAS ===================== -->
+  <section id="canvas" class="card">
+    <h2>1. La etiqueta HTML &lt;canvas&gt; y el contexto 2D</h2>
+
+    <p>El elemento <code>&lt;canvas&gt;</code> de HTML5 es un <strong>lienzo en blanco rectangular</strong>
+       dentro de la página. Por sí solo no muestra nada: es solo un contenedor de píxeles.
+       Para dibujar hay que usar JavaScript y pedirle al canvas un <strong>contexto de renderizado</strong>.</p>
+
+    <h3>Estructura básica</h3>
+<pre><code>&lt;canvas id="miLienzo" width="400" height="400"&gt;
+  Tu navegador no soporta canvas.
+&lt;/canvas&gt;</code></pre>
+    <ul>
+      <li><code>width</code> y <code>height</code> definen el tamaño en píxeles (por defecto 300×150).</li>
+      <li>El texto interno es un <em>contenido alternativo</em> para navegadores que no lo soporten o lectores de pantalla.</li>
+      <li>Si el tamaño se cambia solo con CSS, la imagen se <em>estira</em>; conviene usar los atributos HTML.</li>
+    </ul>
+
+    <h3>Contextos de renderizado</h3>
+    <p>Se obtienen con <code>canvas.getContext(tipo)</code>. Un canvas solo puede usar un tipo de contexto.</p>
+    <table>
+      <thead><tr><th>Contexto</th><th>Descripción</th></tr></thead>
+      <tbody>
+        <tr><td><code>"2d"</code></td><td>Dibujo en dos dimensiones: formas, rutas, texto, imágenes y gradientes. Es el que usa p5.js por defecto.</td></tr>
+        <tr><td><code>"webgl"</code> / <code>"webgl2"</code></td><td>Gráficos 3D acelerados por GPU (basados en OpenGL ES).</td></tr>
+        <tr><td><code>"bitmaprenderer"</code></td><td>Muestra de forma eficiente un <code>ImageBitmap</code> ya generado.</td></tr>
+        <tr><td><code>"webgpu"</code></td><td>API moderna de GPU (disponible en navegadores recientes).</td></tr>
+      </tbody>
+    </table>
+
+    <h3>El contexto 2D</h3>
+<pre><code>const canvas = document.getElementById("miLienzo");
+const ctx = canvas.getContext("2d");
+
+ctx.fillStyle = "rgb(30, 204, 91)";   // color de relleno
+ctx.beginPath();                      // inicia una ruta
+ctx.ellipse(200, 250, 100, 50, 0, 0, Math.PI * 2); // x, y, radioX, radioY, rotación, ángulo inicial, ángulo final
+ctx.fill();                           // rellena la forma</code></pre>
+
+    <p><strong>Sistema de coordenadas:</strong> el origen <code>(0, 0)</code> está en la esquina
+       <em>superior izquierda</em>; <code>x</code> crece hacia la derecha y <code>y</code> crece hacia <em>abajo</em>.</p>
+
+    <p><strong>Métodos y propiedades principales:</strong></p>
+    <ul>
+      <li><code>fillRect(x, y, w, h)</code>, <code>strokeRect()</code>, <code>clearRect()</code>: rectángulos.</li>
+      <li><code>beginPath()</code>, <code>moveTo()</code>, <code>lineTo()</code>, <code>arc()</code>, <code>ellipse()</code>, <code>closePath()</code>: rutas.</li>
+      <li><code>fill()</code> y <code>stroke()</code>: pintan la ruta con <code>fillStyle</code> y <code>strokeStyle</code>.</li>
+      <li><code>lineWidth</code>, <code>font</code>, <code>fillText()</code>, <code>drawImage()</code>, <code>save()</code>/<code>restore()</code>, <code>translate()</code>, <code>rotate()</code>, <code>scale()</code>.</li>
+    </ul>
+
+    <h3>Demostración: el muñeco de nieve con canvas "puro"</h3>
+    <p>El mismo tipo de dibujo, sin librerías, usando solo la API nativa:</p>
+    <canvas id="demo-nativo" width="300" height="300"></canvas>
+    <details>
+      <summary>Ver el código de esta demostración</summary>
+<pre><code>const ctx = document.getElementById("demo-nativo").getContext("2d");
+function circulo(x, y, d) {
+  ctx.beginPath();
+  ctx.arc(x, y, d / 2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+}
+ctx.fillStyle = "#fff"; ctx.strokeStyle = "#000";
+circulo(150, 220, 110);
+circulo(150, 140, 75);
+circulo(150, 85, 55);</code></pre>
+    </details>
+  </section>
+
+  <!-- ===================== TEORÍA: P5 ===================== -->
+  <section id="p5" class="card">
+    <h2>2. Fundamentos de p5.js</h2>
+
+    <p><strong>p5.js</strong> es una librería de JavaScript de código abierto, inspirada en Processing,
+       creada para que artistas, estudiantes y programadores principiantes puedan hacer
+       <strong>dibujos, animaciones e interacciones</strong> de forma sencilla. Por debajo, crea y
+       maneja un elemento <code>&lt;canvas&gt;</code> con su contexto 2D, por lo que no hay que escribir
+       <code>getContext</code> ni <code>beginPath</code> a mano.</p>
+
+    <h3>Cómo se incluye</h3>
+<pre><code>&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"&gt;&lt;/script&gt;
+&lt;script src="sketch.js"&gt;&lt;/script&gt;</code></pre>
+
+    <h3>Estructura de un sketch</h3>
+<pre><code>function setup() {
+  createCanvas(400, 400);   // se ejecuta UNA vez al inicio
+}
+
+function draw() {
+  background(220);          // se ejecuta en bucle (~60 veces por segundo)
+  ellipse(mouseX, mouseY, 50, 50);
+}</code></pre>
+    <ul>
+      <li><code>setup()</code>: configuración inicial; aquí se crea el lienzo con <code>createCanvas(ancho, alto)</code>.</li>
+      <li><code>draw()</code>: se repite continuamente y permite crear animación. Con <code>noLoop()</code> se ejecuta solo una vez (útil para dibujos estáticos como los de esta galería).</li>
+      <li><code>preload()</code>, <code>mousePressed()</code>, <code>keyPressed()</code>: funciones de carga y eventos.</li>
+    </ul>
+
+    <h3>Funciones de dibujo usadas en esta galería</h3>
+    <table>
+      <thead><tr><th>Función</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td><code>background(r, g, b)</code></td><td>Pinta todo el fondo de un color.</td></tr>
+        <tr><td><code>fill(r, g, b)</code> / <code>noFill()</code></td><td>Color de relleno de las figuras / sin relleno.</td></tr>
+        <tr><td><code>stroke()</code> / <code>noStroke()</code></td><td>Color del contorno / sin contorno.</td></tr>
+        <tr><td><code>ellipse(x, y, ancho, alto)</code></td><td>Elipse o círculo centrado en (x, y).</td></tr>
+        <tr><td><code>rect(x, y, ancho, alto)</code></td><td>Rectángulo con la esquina superior izquierda en (x, y).</td></tr>
+        <tr><td><code>line(x1, y1, x2, y2)</code></td><td>Línea entre dos puntos.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Conceptos clave</h3>
+    <ul>
+      <li><strong>Orden de dibujo:</strong> lo que se dibuja después se coloca encima. Por eso el suelo y el sol van antes que el muñeco.</li>
+      <li><strong>Estado de estilo:</strong> <code>fill()</code> y <code>stroke()</code> se mantienen hasta que se cambian.</li>
+      <li><strong>Variables:</strong> guardar valores como <code>var x = 200;</code> permite mover un dibujo completo cambiando un solo número (como en la rana).</li>
+      <li><strong>Modo global vs. modo instancia:</strong> en modo global las funciones están disponibles directamente. En modo instancia (<code>new p5(function(p){...}, "contenedor")</code>) cada sketch vive aislado, lo que permite varios dibujos en la misma página. Esta galería usa modo instancia.</li>
+    </ul>
+
+    <h3>De Khan Academy a la web</h3>
+    <p>Khan Academy usa <strong>ProcessingJS</strong>, cuya sintaxis de dibujo es casi idéntica a la de p5.js
+       (<code>ellipse</code>, <code>rect</code>, <code>fill</code>...). Por eso el código original se puede reutilizar,
+       pero ahora corre en un sitio web propio, con su HTML, su CSS y su JavaScript.</p>
+  </section>
+
+  <!-- ===================== DOM ===================== -->
+  <section id="dom" class="card">
+    <h2>3. Diagrama del DOM de esta página</h2>
+    <p>El <strong>DOM (Document Object Model)</strong> es la representación en forma de <em>árbol</em> que el navegador construye
+       a partir del HTML. Cada etiqueta es un <strong>nodo</strong>; el nodo de arriba es el <em>padre</em>, los de abajo son sus
+       <em>hijos</em> y los que comparten padre son <em>hermanos</em>. JavaScript puede leer y modificar este árbol
+       (por ejemplo con <code>document.getElementById</code>, <code>createElement</code> y <code>appendChild</code>).</p>
+
+    <div class="leyenda">
+      <span><i class="dot gris"></i> Estructura</span>
+      <span><i class="dot morado"></i> Encabezado y menú</span>
+      <span><i class="dot verde"></i> Contenido principal</span>
+      <span><i class="dot coral"></i> Creado por JavaScript</span>
+    </div>
+
+    <ul class="dom-tree">
+      <li><span class="n gris">document</span> <em>raíz del DOM</em>
+        <ul>
+          <li><span class="n gris">html lang="es"</span>
+            <ul>
+              <li><span class="n gris">head</span> <em>metadatos, no se ven</em>
+                <ul>
+                  <li><span class="n gris">meta</span> <em>charset y viewport</em></li>
+                  <li><span class="n gris">title</span></li>
+                  <li><span class="n gris">link</span> <em>css/styles.css</em></li>
+                </ul>
+              </li>
+              <li><span class="n gris">body</span> <em>contenido visible</em>
+                <ul>
+                  <li><span class="n morado">header.site-header</span> <em>barra de navegación fija</em>
+                    <ul>
+                      <li><span class="n morado">a.brand</span></li>
+                      <li><span class="n morado">button#menu-btn</span> <em>botón ☰ para celular</em></li>
+                      <li><span class="n morado">nav#menu</span>
+                        <ul>
+                          <li><span class="n morado">a</span> <em>×5: Inicio, Canvas, p5.js, DOM, Proyectos</em></li>
+                          <li><span class="n morado">div.dropdown</span> <em>menú «Dibujos» con 5 enlaces</em></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                  <li><span class="n verde">main</span>
+                    <ul>
+                      <li><span class="n verde">section#inicio.hero</span> <em>h1, p y enlace .btn</em></li>
+                      <li><span class="n verde">section#canvas.card</span> <em>teoría de &lt;canvas&gt; + demo</em></li>
+                      <li><span class="n verde">section#p5.card</span> <em>teoría de p5.js</em></li>
+                      <li><span class="n verde">section#dom.card</span> <em>esta sección</em></li>
+                      <li><span class="n verde">section#proyectos</span>
+                        <ul>
+                          <li><span class="n coral">div#galeria</span> <em>se llena con main.js</em>
+                            <ul>
+                              <li><span class="n coral">article.proyecto</span> <em>×5, uno por dibujo</em>
+                                <ul>
+                                  <li><span class="n coral">div.lienzo</span>
+                                    <ul><li><span class="n coral">canvas</span> <em>insertado por p5.js (400×400)</em></li></ul>
+                                  </li>
+                                  <li><span class="n coral">div.info</span>
+                                    <ul>
+                                      <li><span class="n coral">h3</span>, <span class="n coral">p</span></li>
+                                      <li><span class="n coral">details</span> › <span class="n coral">pre</span> › <span class="n coral">code</span> <em>código del dibujo</em></li>
+                                    </ul>
+                                  </li>
+                                </ul>
+                              </li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                  <li><span class="n gris">footer</span></li>
+                  <li><span class="n gris">script</span> <em>×3: p5.js, sketches.js, main.js</em></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>¿Cómo se relaciona con el código?</h3>
+    <ul>
+      <li><strong>Nodos padre, hijo y hermano:</strong> <code>head</code> y <code>body</code> son hermanos y ambos son hijos de <code>html</code>.</li>
+      <li><strong>DOM dinámico:</strong> los nodos en coral no están escritos en el HTML. En <code>main.js</code>, <code>document.createElement("article")</code> los crea y <code>appendChild</code> los agrega a <code>div#galeria</code>.</li>
+      <li><strong>Canvas en el DOM:</strong> cada dibujo de p5.js es un elemento <code>&lt;canvas&gt;</code> dentro de su <code>div.lienzo</code>.</li>
+      <li><strong>Seguridad:</strong> el código se muestra con <code>textContent</code>, que inserta texto sin interpretarlo como HTML.</li>
+    </ul>
+
+    <h3>Árbol real generado con JavaScript</h3>
+    <p>Este botón recorre el DOM <em>de verdad</em> (<code>document.body</code>) y muestra los nodos hasta 4 niveles de profundidad:</p>
+    <button id="btn-dom" class="btn-sec">Generar árbol desde el DOM</button>
+    <pre id="dom-vivo" hidden><code></code></pre>
+  </section>
+
+  <!-- ===================== PROYECTOS ===================== -->
+  <section id="proyectos">
+    <h2 class="section-title">4. Proyectos y dibujos</h2>
+    <p class="section-intro">Cada dibujo es un lienzo de 400×400 píxeles renderizado con p5.js. Debajo de cada uno puedes ver su código.</p>
+    <div id="galeria"></div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Proyecto escolar · HTML + CSS + JavaScript + p5.js · Alojado en GitHub Pages</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<script src="js/sketches.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
